@@ -4,8 +4,8 @@ import java.util.List;
 
 public interface IConvidadoDAO {
     void addConvidado(Convidado convidado);
-    Convidado getConvidado(int id);
+    Convidado buscarConvidadoPorId(int id) throws ConvidadoNaoEncontradoException;
     List<Convidado> getAllConvidados();
-    void updateConvidado(Convidado convidado);
+    int updateConvidado(Convidado convidado);
     void deleteConvidado(Convidado convidado);
 }

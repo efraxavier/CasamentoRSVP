@@ -9,10 +9,10 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConvidadoDAOImpl extends ConvidadoDatabaseHelper {
+public class ConvidadoDAOImpl extends ConvidadoDatabaseHelper implements IConvidadoDAO {
 
     private static final String TAG = "ConvidadoDAOImpl";
-    private static final String COLUMN_RSVP = "rsvp"; // Definindo a coluna RSVP
+    private static final String COLUMN_RSVP = "rsvp";
 
     public ConvidadoDAOImpl(Context context) {
         super(context);
@@ -25,7 +25,8 @@ public class ConvidadoDAOImpl extends ConvidadoDatabaseHelper {
         values.put("nome", convidado.getNome());
         values.put("email", convidado.getEmail());
         values.put("telefone", convidado.getTelefone());
-        values.put(COLUMN_RSVP, convidado.isRsvp() ? 1 : 0); // Adicionando RSVP
+        values.put(COLUMN_RSVP, convidado.isRsvp() ? 1 : 0);
+        values.put("preferencias_alimentares", convidado.getPreferenciasAlimentares()); // Adicionando preferencias alimentares
 
         long id = db.insert("convidados", null, values);
         if (id != -1) {
@@ -37,20 +38,27 @@ public class ConvidadoDAOImpl extends ConvidadoDatabaseHelper {
     }
 
     @Override
-    public Convidado getConvidado(int id) {
+    public Convidado buscarConvidadoPorId(int id) throws ConvidadoNaoEncontradoException {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("convidados", new String[]{"id", "nome", "email", "telefone", COLUMN_RSVP}, "id=?", new String[]{String.valueOf(id)}, null, null, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-            Convidado convidado = new Convidado(Integer.parseInt(cursor.getString(cursor.getInt(0))), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4) == 1, cursor.getString(5)); // Incluindo RSVP
+        Cursor cursor = db.query("convidados", new String[]{"id", "nome", "email", "telefone", COLUMN_RSVP, "preferencias_alimentares"}, "id=?", new String[]{String.valueOf(id)}, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            Convidado convidado = new Convidado(
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getString(2),
+                    cursor.getString(3),
+                    cursor.getInt(4) == 1,
+                    cursor.getString(5)
+            );
             cursor.close();
             db.close();
             Log.d(TAG, "Convidado recuperado com sucesso: " + convidado.toString());
             return convidado;
+        } else {
+            db.close();
+            Log.e(TAG, "Erro ao recuperar convidado com ID: " + id);
+            throw new ConvidadoNaoEncontradoException("Convidado não encontrado com o ID: " + id);
         }
-        db.close();
-        Log.e(TAG, "Erro ao recuperar convidado com ID: " + id);
-        return null;
     }
 
     @Override
@@ -61,7 +69,14 @@ public class ConvidadoDAOImpl extends ConvidadoDatabaseHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
-                Convidado convidado = new Convidado(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4) == 1, cursor.getString(5)); // Incluindo RSVP
+                Convidado convidado = new Convidado(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getInt(4) == 1,
+                        cursor.getString(5)
+                );
                 convidados.add(convidado);
                 Log.d(TAG, "Convidado recuperado: " + convidado.toString());
             } while (cursor.moveToNext());
@@ -80,7 +95,8 @@ public class ConvidadoDAOImpl extends ConvidadoDatabaseHelper {
         values.put("nome", convidado.getNome());
         values.put("email", convidado.getEmail());
         values.put("telefone", convidado.getTelefone());
-        values.put(COLUMN_RSVP, convidado.isRsvp() ? 1 : 0); // Atualizando RSVP
+        values.put(COLUMN_RSVP, convidado.isRsvp() ? 1 : 0);
+        values.put("preferencias_alimentares", convidado.getPreferenciasAlimentares()); // Atualizando preferencias alimentares
 
         int rows = db.update("convidados", values, "id = ?", new String[]{String.valueOf(convidado.getId())});
         if (rows > 0) {
@@ -89,7 +105,7 @@ public class ConvidadoDAOImpl extends ConvidadoDatabaseHelper {
             Log.e(TAG, "Erro ao atualizar convidado: " + convidado.toString());
         }
         db.close();
-        return 1;
+        return rows;
     }
 
     @Override

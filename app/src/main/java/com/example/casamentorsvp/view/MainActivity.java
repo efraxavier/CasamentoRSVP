@@ -11,6 +11,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button adicionarConvidadoButton;
     private Button listarConvidadosButton;
+    private Button buscarConvidadoButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,20 +20,26 @@ public class MainActivity extends AppCompatActivity {
 
         adicionarConvidadoButton = findViewById(R.id.adicionarConvidadoButton);
         listarConvidadosButton = findViewById(R.id.listarConvidadosButton);
+        buscarConvidadoButton = findViewById(R.id.buscarConvidadoButton);
 
         adicionarConvidadoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AdicionarConvidadoActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(MainActivity.this, AdicionarConvidadoActivity.class));
             }
         });
 
         listarConvidadosButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ListarConvidadosActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(MainActivity.this, ListarConvidadosActivity.class));
+            }
+        });
+
+        buscarConvidadoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, BuscarConvidadoActivity.class));
             }
         });
     }
