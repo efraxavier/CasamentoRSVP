@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.casamentorsvp.R;
 import com.example.casamentorsvp.model.Convidado;
 import com.example.casamentorsvp.model.ConvidadoDAOImpl;
-import com.example.casamentorsvp.model.ConvidadoNaoEncontradoException;
 
 public class AtualizarConvidadoActivity extends AppCompatActivity {
 
@@ -26,39 +25,46 @@ public class AtualizarConvidadoActivity extends AppCompatActivity {
         nomeEditText = findViewById(R.id.nomeEditText);
         emailEditText = findViewById(R.id.emailEditText);
         telefoneEditText = findViewById(R.id.telefoneEditText);
-        editTextPreferencias = findViewById(R.id.editTextPreferencias);
         atualizarButton = findViewById(R.id.atualizarButton);
+        editTextPreferencias = findViewById(R.id.editTextPreferencias);
 
         convidadoDAO = new ConvidadoDAOImpl(this);
 
-        int convidadoId = getIntent().getIntExtra("convidado_id", -1);
+        // Recebe o ID do convidado passado pela BuscarConvidadoActivity
+        int convidadoId = getIntent().getIntExtra("convidadoId", -1);
         if (convidadoId != -1) {
-            try {
-                convidadoAtual = convidadoDAO.buscarConvidadoPorId(convidadoId);
+            convidadoAtual = convidadoDAO.getConvidado(convidadoId);
+            if (convidadoAtual != null) {
+                // Preenche os campos com os dados do convidado atual
                 nomeEditText.setText(convidadoAtual.getNome());
                 emailEditText.setText(convidadoAtual.getEmail());
                 telefoneEditText.setText(convidadoAtual.getTelefone());
                 editTextPreferencias.setText(convidadoAtual.getPreferenciasAlimentares());
-            } catch (ConvidadoNaoEncontradoException e) {
-                // Handle exception
             }
         }
 
         atualizarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String nome = nomeEditText.getText().toString().trim();
-                String email = emailEditText.getText().toString().trim();
-                String telefone = telefoneEditText.getText().toString().trim();
-                String preferencias = editTextPreferencias.getText().toString().trim();
+                if (convidadoAtual != null) {
+                    String nome = nomeEditText.getText().toString().trim();
+                    String email = emailEditText.getText().toString().trim();
+                    String telefone = telefoneEditText.getText().toString().trim();
+                    String preferencias = editTextPreferencias.getText().toString().trim();
 
-                convidadoAtual.setNome(nome);
-                convidadoAtual.setEmail(email);
-                convidadoAtual.setTelefone(telefone);
-                convidadoAtual.setPreferenciasAlimentares(preferencias);
+                    convidadoAtual.setNome(nome);
+                    convidadoAtual.setEmail(email);
+                    convidadoAtual.setTelefone(telefone);
+                    convidadoAtual.setPreferenciasAlimentares(preferencias);
 
-                convidadoDAO.updateConvidado(convidadoAtual);
-                finish();
+                    convidadoDAO.updateConvidado(convidadoAtual);
+
+                    // Envia o convidado atualizado de volta para a BuscarConvidadoActivity
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("convidadoAtualizado", convidadoAtual);
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                }
             }
         });
     }

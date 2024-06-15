@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.casamentorsvp.R;
 import com.example.casamentorsvp.model.Convidado;
@@ -15,11 +16,8 @@ import com.example.casamentorsvp.model.ConvidadoNaoEncontradoException;
 public class BuscarConvidadoActivity extends AppCompatActivity {
 
     private EditText idEditText;
-    private Button buscarButton;
-    private TextView resultadoTextView;
-    private Button atualizarButton;
-    private Button deletarButton;
-
+    private TextView resultTextView;
+    private Button buscarButton, atualizarButton, deletarButton;
     private ConvidadoDAOImpl convidadoDAO;
     private Convidado convidadoAtual;
 
@@ -29,8 +27,8 @@ public class BuscarConvidadoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_buscar_convidado);
 
         idEditText = findViewById(R.id.idEditText);
+        resultTextView = findViewById(R.id.resultTextView);
         buscarButton = findViewById(R.id.buscarButton);
-        resultadoTextView = findViewById(R.id.resultadoTextView);
         atualizarButton = findViewById(R.id.atualizarButton);
         deletarButton = findViewById(R.id.deletarButton);
 
@@ -39,16 +37,12 @@ public class BuscarConvidadoActivity extends AppCompatActivity {
         buscarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int id = Integer.parseInt(idEditText.getText().toString().trim());
-                try {
-                    convidadoAtual = convidadoDAO.buscarConvidadoPorId(id);
-                    resultadoTextView.setText(convidadoAtual.toString());
-                    atualizarButton.setVisibility(View.VISIBLE);
-                    deletarButton.setVisibility(View.VISIBLE);
-                } catch (ConvidadoNaoEncontradoException e) {
-                    resultadoTextView.setText(e.getMessage());
-                    atualizarButton.setVisibility(View.GONE);
-                    deletarButton.setVisibility(View.GONE);
+                int convidadoId = Integer.parseInt(idEditText.getText().toString().trim());
+                convidadoAtual = convidadoDAO.getConvidado(convidadoId);
+                if (convidadoAtual != null) {
+                    resultTextView.setText(convidadoAtual.toString());
+                } else {
+                    resultTextView.setText("Convidado não encontrado");
                 }
             }
         });
@@ -56,20 +50,34 @@ public class BuscarConvidadoActivity extends AppCompatActivity {
         atualizarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(BuscarConvidadoActivity.this, AtualizarConvidadoActivity.class);
-                intent.putExtra("convidado_id", convidadoAtual.getId());
-                startActivity(intent);
+                if (convidadoAtual != null) {
+                    Intent intent = new Intent(BuscarConvidadoActivity.this, AtualizarConvidadoActivity.class);
+                    intent.putExtra("convidadoId", convidadoAtual.getId());
+                    startActivityForResult(intent, 1);
+                }
             }
         });
 
         deletarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                convidadoDAO.deleteConvidado(convidadoAtual);
-                resultadoTextView.setText("Convidado deletado com sucesso!");
-                atualizarButton.setVisibility(View.GONE);
-                deletarButton.setVisibility(View.GONE);
+                if (convidadoAtual != null) {
+                    convidadoDAO.deleteConvidado(convidadoAtual);
+                    resultTextView.setText("Convidado deletado com sucesso");
+                    convidadoAtual = null;
+                }
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            if (data != null) {
+                convidadoAtual = (Convidado) data.getSerializableExtra("convidadoAtualizado");
+                resultTextView.setText(convidadoAtual.toString());
+            }
+        }
     }
 }

@@ -1,23 +1,22 @@
 package com.example.casamentorsvp.model;
+import java.io.Serializable;
 
-public class Convidado {
+public class Convidado implements Serializable {
     private int id;
     private String nome;
     private String email;
     private String telefone;
+    private boolean rsvp;
     private String preferenciasAlimentares;
 
-    private boolean rsvp; // Adicionando o atributo RSVP
-
     // Construtor completo
-    public Convidado(int i, String nome, String email, String telefone, boolean rsvp, String preferenciasAlimentares) {
+    public Convidado(int id, String nome, String email, String telefone, boolean rsvp, String preferenciasAlimentares) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.telefone = telefone;
         this.rsvp = rsvp;
         this.preferenciasAlimentares = preferenciasAlimentares;
-
     }
 
     // Getter e Setter para id
@@ -81,9 +80,8 @@ public class Convidado {
                 ", nome='" + nome + '\'' +
                 ", email='" + email + '\'' +
                 ", telefone='" + telefone + '\'' +
-                ", rsvp='" + rsvp + '\'' +
-                ", preferenciasAlimentares=" + preferenciasAlimentares +
+                ", rsvp=" + rsvp +
+                ", preferenciasAlimentares='" + preferenciasAlimentares + '\'' +
                 '}';
     }
-
 }

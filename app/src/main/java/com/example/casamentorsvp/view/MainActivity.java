@@ -9,9 +9,7 @@ import com.example.casamentorsvp.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button adicionarConvidadoButton;
-    private Button listarConvidadosButton;
-    private Button buscarConvidadoButton;
+    private Button adicionarConvidadoButton, listarConvidadosButton, buscarConvidadoButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

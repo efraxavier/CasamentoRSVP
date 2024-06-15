@@ -9,33 +9,30 @@
         android:id="@+id/idEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Digite o ID do convidado" />
+        android:hint="ID do Convidado"
+        android:inputType="number" />
 
     <Button
         android:id="@+id/buscarButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Buscar" />
+        android:text="Buscar Convidado" />
 
     <TextView
-        android:id="@+id/resultadoTextView"
+        android:id="@+id/resultTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:text="Resultado" />
+        android:paddingTop="16dp" />
 
     <Button
         android:id="@+id/atualizarButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Atualizar"
-        android:visibility="gone" />
+        android:text="Atualizar Convidado" />
 
     <Button
         android:id="@+id/deletarButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Deletar"
-        android:visibility="gone" />
-
+        android:text="Deletar Convidado" />
 </LinearLayout>

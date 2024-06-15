@@ -34,7 +34,7 @@ public class AdicionarConvidadoActivity extends AppCompatActivity {
                 String preferencias = editTextPreferencias.getText().toString().trim();
 
                 if (!nome.isEmpty() && !email.isEmpty() && !telefone.isEmpty()) {
-                    Convidado convidado = new Convidado(0,nome, email, telefone, false, preferencias); // Removido o ID da criação do Convidado
+                    Convidado convidado = new Convidado(0, nome, email, telefone, false, preferencias); // ID será gerenciado pelo banco de dados
                     ConvidadoDAOImpl convidadoDAO = new ConvidadoDAOImpl(AdicionarConvidadoActivity.this);
                     convidadoDAO.addConvidado(convidado);
 

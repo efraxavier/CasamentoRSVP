@@ -12,8 +12,8 @@
 
         <activity android:name=".view.AdicionarConvidadoActivity" />
         <activity android:name=".view.ListarConvidadosActivity" />
-        <activity android:name=".view.BuscarConvidadoActivity" />
         <activity android:name=".view.AtualizarConvidadoActivity" />
+        <activity android:name=".view.BuscarConvidadoActivity" />
         <activity android:name=".view.MainActivity"
             android:exported="true">
             <intent-filter>
